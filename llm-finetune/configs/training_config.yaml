@@ -1,0 +1,63 @@
+# Training Configuration
+# Compatible with Hugging Face TrainingArguments + custom SFTTrainer
+
+model:
+  # Hugging Face model hub path or local path
+  # Recommended open-source models for fine-tuning:
+  #   - Qwen/Qwen2-7B-Instruct      (Alibaba, strong Chinese capability)
+  #   - meta-llama/Llama-2-7b-hf    (Meta, broad English tasks)
+  #   - THUDM/chatglm3-6b           (Tsinghua, bilingual chat)
+  #   - mistralai/Mistral-7B-v0.1   (Mistral AI, efficient architecture)
+  name_or_path: "Qwen/Qwen2-7B-Instruct"
+  trust_remote_code: true
+  torch_dtype: "bfloat16"   # bfloat16 / float16 / float32
+
+data:
+  train_file: "data/train.jsonl"
+  eval_file: "data/eval.jsonl"
+  # Instruction-following format: {"instruction": ..., "input": ..., "output": ...}
+  # or ShareGPT format:           {"conversations": [{"from": "human", "value": ...}, ...]}
+  data_format: "alpaca"     # alpaca | sharegpt
+  max_length: 2048
+  # Fraction of dataset used for evaluation when no separate eval file is given
+  eval_split_ratio: 0.05
+
+training:
+  output_dir: "outputs/qwen2-7b-lora"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4   # effective batch size = 4 × 4 = 16
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  logging_steps: 10
+  eval_steps: 100
+  save_steps: 100
+  save_total_limit: 3
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  dataloader_num_workers: 4
+  remove_unused_columns: false
+  # Gradient checkpointing reduces VRAM by ~30% at the cost of slightly slower training
+  gradient_checkpointing: true
+  # Report training metrics to tensorboard (use "wandb" for Weights & Biases)
+  report_to: "tensorboard"
+
+deepspeed:
+  # Set to null to disable DeepSpeed (single GPU training)
+  # Set to "configs/ds_zero2.json" or "configs/ds_zero3.json" for multi-GPU
+  config: null
+
+inference:
+  max_new_tokens: 512
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.1
+  do_sample: true
