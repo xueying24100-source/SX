@@ -1,0 +1,633 @@
+/* ==========================================================================
+   style.css — To-Do List Application Styles
+   Includes: CSS variables, dark/light themes, animations, responsive layout
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Custom Properties (Design Tokens)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  --color-bg: #f0f2f5;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8f9fa;
+  --color-border: #e2e8f0;
+  --color-text-primary: #1a202c;
+  --color-text-secondary: #718096;
+  --color-text-muted: #a0aec0;
+  --color-accent: #667eea;
+  --color-accent-hover: #5a67d8;
+  --color-accent-light: #ebf4ff;
+  --color-danger: #e53e3e;
+  --color-danger-hover: #c53030;
+  --color-success: #38a169;
+  --color-warning: #dd6b20;
+  --color-overdue: #e53e3e;
+  --color-placeholder: rgba(102, 126, 234, 0.15);
+  --task-item-max-height: 100px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+[data-theme="dark"] {
+  --color-bg: #1a1d23;
+  --color-surface: #252930;
+  --color-surface-alt: #2d3139;
+  --color-border: #3a3f4b;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #a0aec0;
+  --color-text-muted: #718096;
+  --color-accent: #7c8ef0;
+  --color-accent-hover: #8f9ff5;
+  --color-accent-light: rgba(124, 142, 240, 0.15);
+  --color-danger: #fc8181;
+  --color-danger-hover: #feb2b2;
+  --color-success: #68d391;
+  --color-warning: #f6ad55;
+  --color-overdue: #fc8181;
+  --color-placeholder: rgba(124, 142, 240, 0.12);
+  --task-item-max-height: 100px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   2. System Dark Mode (fallback if no manual toggle set)
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #1a1d23;
+    --color-surface: #252930;
+    --color-surface-alt: #2d3139;
+    --color-border: #3a3f4b;
+    --color-text-primary: #e2e8f0;
+    --color-text-secondary: #a0aec0;
+    --color-text-muted: #718096;
+    --color-accent: #7c8ef0;
+    --color-accent-hover: #8f9ff5;
+    --color-accent-light: rgba(124, 142, 240, 0.15);
+    --color-danger: #fc8181;
+    --color-danger-hover: #feb2b2;
+    --color-success: #68d391;
+    --color-warning: #f6ad55;
+    --color-overdue: #fc8181;
+    --color-placeholder: rgba(124, 142, 240, 0.12);
+    --task-item-max-height: 100px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Base Reset & Global Styles
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   4. Layout
+   -------------------------------------------------------------------------- */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem 4rem;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 640px;
+}
+
+/* --------------------------------------------------------------------------
+   5. Header
+   -------------------------------------------------------------------------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--color-accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.btn-theme-toggle {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-theme-toggle:hover {
+  background: var(--color-surface-alt);
+  transform: scale(1.05);
+}
+
+/* --------------------------------------------------------------------------
+   6. Task Input Form
+   -------------------------------------------------------------------------- */
+.task-form {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--color-border);
+  transition: box-shadow var(--transition-fast);
+}
+
+.task-form:focus-within {
+  box-shadow: var(--shadow-lg);
+}
+
+.form-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.task-input {
+  flex: 1;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.975rem;
+  font-family: inherit;
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.task-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.task-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.due-date-input {
+  padding: 0.65rem 0.6rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-family: inherit;
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+  outline: none;
+  cursor: pointer;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.due-date-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+/* Style native date picker for dark mode */
+[data-theme="dark"] .due-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.btn-add {
+  padding: 0.65rem 1.1rem;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.05);
+}
+
+.btn-add:active {
+  transform: scale(0.97);
+}
+
+/* --------------------------------------------------------------------------
+   7. Error Message
+   -------------------------------------------------------------------------- */
+.error-message {
+  background: #fff5f5;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .error-message {
+  background: rgba(252, 129, 129, 0.1);
+}
+
+.error-message.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   8. Task List Panel
+   -------------------------------------------------------------------------- */
+.task-panel {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.task-list {
+  list-style: none;
+  min-height: 60px;
+}
+
+/* --------------------------------------------------------------------------
+   9. Task Item
+   -------------------------------------------------------------------------- */
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  transition: background-color var(--transition-fast);
+  animation: slideIn 0.22s ease-out;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-item:hover {
+  background: var(--color-surface-alt);
+}
+
+/* --------------------------------------------------------------------------
+   10. Drag and Drop Styles
+   -------------------------------------------------------------------------- */
+.task-item[draggable="true"] {
+  cursor: default;
+}
+
+.drag-handle {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0 2px;
+  transition: color var(--transition-fast);
+}
+
+.drag-handle:hover {
+  color: var(--color-text-secondary);
+}
+
+.task-item.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.task-placeholder {
+  background: var(--color-placeholder);
+  border: 2px dashed var(--color-accent);
+  border-radius: var(--radius-sm);
+  margin: 0;
+  transition: height var(--transition-fast);
+}
+
+/* --------------------------------------------------------------------------
+   11. Task Checkbox
+   -------------------------------------------------------------------------- */
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   12. Task Content
+   -------------------------------------------------------------------------- */
+.task-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.task-text {
+  font-size: 0.975rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  word-break: break-word;
+  transition: color var(--transition-fast), text-decoration var(--transition-fast);
+  display: block;
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.task-edit-input {
+  font-size: 0.975rem;
+  font-family: inherit;
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.5rem;
+  outline: none;
+  width: 100%;
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.task-due {
+  font-size: 0.775rem;
+  color: var(--color-text-secondary);
+}
+
+.task-due.overdue {
+  color: var(--color-overdue);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   13. Task Action Buttons
+   -------------------------------------------------------------------------- */
+.task-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.task-item:hover .task-actions,
+.task-item:focus-within .task-actions {
+  opacity: 1;
+}
+
+.btn-edit,
+.btn-delete {
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit:hover {
+  background: var(--color-accent-light);
+  transform: scale(1.1);
+}
+
+.btn-delete:hover {
+  background: rgba(229, 62, 62, 0.1);
+  transform: scale(1.1);
+}
+
+/* --------------------------------------------------------------------------
+   14. Empty State
+   -------------------------------------------------------------------------- */
+.task-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 2.5rem 1rem;
+  font-size: 0.925rem;
+  list-style: none;
+}
+
+/* --------------------------------------------------------------------------
+   15. Footer Bar (Counter + Filter + Clear)
+   -------------------------------------------------------------------------- */
+.task-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.task-counter {
+  font-size: 0.825rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.filter-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.filter-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.825rem;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.filter-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.filter-btn.active {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  font-weight: 600;
+}
+
+.btn-clear-completed {
+  background: none;
+  border: none;
+  font-size: 0.825rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-clear-completed:hover {
+  color: var(--color-danger);
+}
+
+/* --------------------------------------------------------------------------
+   16. Animations
+   -------------------------------------------------------------------------- */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: var(--task-item-max-height);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30px);
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.task-item.removing {
+  animation: slideOut 0.25s ease-in forwards;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   17. Responsive Design
+   -------------------------------------------------------------------------- */
+
+/* Tablet (≤ 640px) */
+@media (max-width: 640px) {
+  .app-wrapper {
+    padding: 1.25rem 0.75rem 3rem;
+  }
+
+  .app-title {
+    font-size: 1.6rem;
+  }
+
+  .form-row {
+    flex-wrap: wrap;
+  }
+
+  .due-date-input {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .task-footer {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .task-counter {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Mobile (≤ 400px) */
+@media (max-width: 400px) {
+  .btn-add {
+    width: 100%;
+    padding: 0.65rem;
+  }
+
+  .task-input {
+    width: 100%;
+  }
+
+  .task-actions {
+    opacity: 1; /* Always visible on touch devices */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   18. Focus Visible (Accessibility)
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Remove default focus ring for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
