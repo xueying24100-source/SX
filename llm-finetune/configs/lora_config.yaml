@@ -1,0 +1,39 @@
+# LoRA / QLoRA Configuration
+# Refer to: https://arxiv.org/abs/2106.09685 (LoRA paper)
+#           https://arxiv.org/abs/2305.14314 (QLoRA paper)
+
+lora:
+  # Rank of the update matrices. Lower rank → fewer parameters, faster training.
+  # Common values: 8, 16, 32, 64.  Start with 16 for most tasks.
+  r: 16
+
+  # Scaling factor for LoRA updates: effective lr ≈ alpha/r * learning_rate
+  lora_alpha: 32
+
+  # Dropout applied to LoRA layers (regularisation)
+  lora_dropout: 0.05
+
+  # Which linear projection layers to apply LoRA to.
+  # "all-linear" applies to every linear layer in the model.
+  # For LLaMA-style models you can specify:
+  #   ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  target_modules: "all-linear"
+
+  # Whether to use bias in LoRA layers (none / all / lora_only)
+  bias: "none"
+
+  # Task type: CAUSAL_LM for GPT-style, SEQ_2_SEQ_LM for T5-style
+  task_type: "CAUSAL_LM"
+
+qlora:
+  # Enable 4-bit quantization (QLoRA mode)
+  load_in_4bit: true
+
+  # Quantization data type for the base model weights
+  bnb_4bit_quant_type: "nf4"       # nf4 or fp4
+
+  # Compute dtype for forward/backward pass
+  bnb_4bit_compute_dtype: "bfloat16"
+
+  # Use double quantization to further reduce memory (quantise the quantisation constants)
+  bnb_4bit_use_double_quant: true
