@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A modern, fully-featured To-Do List application with local storage persistence, dark/light mode, drag-and-drop reordering, and due dates." />
+  <title>To-Do List App</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-wrapper">
+    <main class="app-container" role="main">
+
+      <!-- Header -->
+      <header class="app-header">
+        <h1 class="app-title">✅ To-Do</h1>
+        <button
+          id="theme-toggle"
+          class="btn-theme-toggle"
+          type="button"
+          aria-label="Switch to dark mode"
+          title="Switch to dark mode"
+        >🌙</button>
+      </header>
+
+      <!-- Add Task Form -->
+      <section aria-label="Add new task">
+        <form id="task-form" class="task-form" novalidate>
+          <div class="form-row">
+            <label for="task-input" class="sr-only">New task</label>
+            <input
+              type="text"
+              id="task-input"
+              class="task-input"
+              placeholder="What needs to be done?"
+              aria-label="New task text"
+              autocomplete="off"
+              maxlength="200"
+            />
+            <label for="due-date-input" class="sr-only">Due date (optional)</label>
+            <input
+              type="date"
+              id="due-date-input"
+              class="due-date-input"
+              aria-label="Due date (optional)"
+              title="Due date (optional)"
+            />
+            <button type="submit" class="btn-add" aria-label="Add task" title="Add task">+</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Error Message -->
+      <div
+        id="error-message"
+        class="error-message"
+        role="alert"
+        aria-live="assertive"
+        hidden
+      ></div>
+
+      <!-- Task List Panel -->
+      <section class="task-panel" aria-label="Task list">
+        <ul
+          id="task-list"
+          class="task-list"
+          aria-label="Tasks"
+          aria-live="polite"
+        ></ul>
+
+        <!-- Footer: counter + filters + clear -->
+        <footer class="task-footer">
+          <span id="task-counter" class="task-counter" aria-live="polite">0 items left</span>
+
+          <nav class="filter-group" aria-label="Filter tasks">
+            <button class="filter-btn active" data-filter="all" type="button" aria-pressed="true">All</button>
+            <button class="filter-btn" data-filter="active" type="button" aria-pressed="false">Active</button>
+            <button class="filter-btn" data-filter="completed" type="button" aria-pressed="false">Completed</button>
+          </nav>
+
+          <button
+            id="clear-completed"
+            class="btn-clear-completed"
+            type="button"
+            aria-label="Clear all completed tasks"
+          >Clear completed</button>
+        </footer>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Screen-reader only utility class -->
+  <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+
+  <!-- JS Modules (load order matters) -->
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/drag.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
